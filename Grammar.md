@@ -26,14 +26,14 @@ There are print statments and assignment statements
 
 Expressions support Logical Operators, Comparisons, Arithmetic, literals and identifiers
 
-Program:         1 or more statements followed by ;  
-stmt:            assignment or print statement  
-assignStmt:      assign expression to identifier   
-printStmt:       print identifier  
-expOr:           Logical OR (lowest Precedence)  
-expAnd:          Logical AND  
-expNot:          Logical NOT   
-expComp:         Comparisons  
-expNum:          plus and minus  
-term:            multiplication and division  
-factor:          identifier, number, boolean, or another expression between ()  
+```Program:```         1 or more statements followed by ;  
+```stmt:```            assignment or print statement  
+```assignStmt:```      assign expression to identifier   
+```printStmt:```       print identifier  
+```expOr:```           Logical OR (lowest Precedence)  
+```expAnd:```          Logical AND  
+```expNot:```          Logical NOT   
+```expComp:```         Comparisons  
+```expNum:```          plus and minus  
+```term:```            multiplication and division  
+```factor:```          identifier, number, boolean, or another expression between ()  
