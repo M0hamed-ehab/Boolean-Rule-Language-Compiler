@@ -1,0 +1,2 @@
+value := age 18;
+print value;

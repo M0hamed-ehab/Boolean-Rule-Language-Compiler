@@ -1,0 +1,2 @@
+eligible := ((income + savings) > debt) and ((age + 1) >= 18 or guardian);
+print eligible;

@@ -1,0 +1,2 @@
+adult := age >= 18;
+print adult;

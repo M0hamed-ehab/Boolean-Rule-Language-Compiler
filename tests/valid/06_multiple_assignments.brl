@@ -1,0 +1,4 @@
+base := 10;
+limit := base * 2 + 5;
+allowed := limit >= 20 and not false;
+print allowed;

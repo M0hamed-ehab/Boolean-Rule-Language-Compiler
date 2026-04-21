@@ -1,0 +1,2 @@
+valid := (score + bonus) >= 60 and attempts < 3;
+print valid;

@@ -1,0 +1,2 @@
+flag := true or false and not false;
+print flag;
