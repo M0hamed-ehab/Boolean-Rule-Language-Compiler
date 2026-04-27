@@ -1,3 +1,5 @@
+package Scanner;
+
 public class Token {
 
     public final TokenType type;
