@@ -10,7 +10,8 @@ import java.util.List;
 public class MAIN {
 
     public static void main(String[] args) {
-        String source = loadSource(args);
+        String[] filePath = new String[]{"tests/valid/sample.brl"};
+        String source = loadSource(filePath);
         if (source == null) {
             System.exit(1);
             return;
