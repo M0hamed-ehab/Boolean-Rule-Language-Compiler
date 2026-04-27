@@ -1,16 +1,16 @@
 import Scanner.Scanner;
 import Scanner.Token;
-import ast.AstNode;
 import ast.ProgramNode;
+import ast.visualization.AstVisualizer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class MAIN {
+public class ParseAndVisualize {
 
     public static void main(String[] args) {
-        String[] filePath = new String[]{"tests/valid/sample.brl"};
+        String filePath = "tests/valid/sample.brl";
         String source = loadSource(filePath);
         if (source == null) {
             System.exit(1);
@@ -33,17 +33,18 @@ public class MAIN {
             Parser parser = new Parser(tokens);
             ProgramNode program = parser.parseProgram();
 
-            System.out.println("Parse successful.");
-            System.out.println(toText(program));
+            String title = filePath == null
+                    ? "Boolean Rule Language - AST"
+                    : "AST - " + Path.of(filePath).getFileName();
+
+            AstVisualizer.showAndWait(program, title);
         } catch (RuntimeException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
     }
 
-    private static String loadSource(String[] args) {
-        String filePath = firstNonFlag(args);
-
+    private static String loadSource(String filePath) {
         if (filePath == null) {
             return """
                         adult := age >= 18;
@@ -83,21 +84,5 @@ public class MAIN {
         }
 
         return null;
-    }
-
-    private static String toText(AstNode root) {
-        StringBuilder builder = new StringBuilder();
-        appendNode(builder, root, 0);
-        return builder.toString();
-    }
-
-    private static void appendNode(StringBuilder builder, AstNode node, int depth) {
-        builder.append("  ".repeat(Math.max(0, depth)));
-        builder.append(node.label());
-        builder.append('\n');
-
-        for (AstNode child : node.children()) {
-            appendNode(builder, child, depth + 1);
-        }
     }
 }
