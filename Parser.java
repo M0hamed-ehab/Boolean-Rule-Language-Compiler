@@ -36,6 +36,7 @@ public class Parser {
         }
 
         while (!isAtEnd()) {
+            detectEmptyStatement();
             statements.add(parseStatement());
             consume(TokenType.SEMICOLON, "Expected ';' after statement.");
         }
@@ -51,6 +52,8 @@ public class Parser {
         if (check(TokenType.ID)) {
             return parseAssignmentStatement();
         }
+
+        detectKeywordUsedAsIdentifier();
 
         throw error(peek(), "Expected a statement.");
     }
@@ -71,6 +74,7 @@ public class Parser {
         ExpressionNode expression = parseAndExpression();
 
         while (match(TokenType.OR)) {
+            ensureRightOperand(previous());
             ExpressionNode right = parseAndExpression();
             expression = new BinaryExpressionNode(expression, BinaryOperator.OR, right);
         }
@@ -82,6 +86,7 @@ public class Parser {
         ExpressionNode expression = parseNotExpression();
 
         while (match(TokenType.AND)) {
+            ensureRightOperand(previous());
             ExpressionNode right = parseNotExpression();
             expression = new BinaryExpressionNode(expression, BinaryOperator.AND, right);
         }
@@ -91,6 +96,7 @@ public class Parser {
 
     private ExpressionNode parseNotExpression() {
         if (match(TokenType.NOT)) {
+            ensureRightOperand(previous());
             ExpressionNode operand = parseNotExpression();
             return new UnaryExpressionNode(UnaryOperator.NOT, operand);
         }
@@ -103,6 +109,7 @@ public class Parser {
 
         if (match(TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.EQ, TokenType.NE)) {
             Token operator = previous();
+            ensureRightOperand(operator);
             ExpressionNode right = parseAdditiveExpression();
             expression = new BinaryExpressionNode(expression, mapComparisonOperator(operator.type), right);
         }
@@ -115,6 +122,7 @@ public class Parser {
 
         while (match(TokenType.PLUS, TokenType.MINUS)) {
             Token operator = previous();
+            ensureRightOperand(operator);
             ExpressionNode right = parseMultiplicativeExpression();
             expression = new BinaryExpressionNode(expression, mapArithmeticOperator(operator.type), right);
         }
@@ -127,6 +135,7 @@ public class Parser {
 
         while (match(TokenType.MUL, TokenType.DIV)) {
             Token operator = previous();
+            ensureRightOperand(operator);
             ExpressionNode right = parseFactor();
             expression = new BinaryExpressionNode(expression, mapArithmeticOperator(operator.type), right);
         }
@@ -156,6 +165,8 @@ public class Parser {
             consume(TokenType.RPAREN, "Expected ')' after expression.");
             return new GroupingExpressionNode(expression);
         }
+
+        detectInvalidExpressionStart();
 
         throw error(peek(), "Expected expression.");
     }
@@ -199,6 +210,68 @@ public class Parser {
         }
 
         return false;
+    }
+    //ERROR DETECTION 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void detectEmptyStatement() {
+        if (check(TokenType.SEMICOLON)) {
+            throw error(peek(), "Empty statements are not allowed.");
+        }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void detectKeywordUsedAsIdentifier() {
+        if (isKeyword(peek().type)) {
+            throw error(peek(), "Keywords cannot be used as statement identifiers.");
+        }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void ensureRightOperand(Token operator) {
+        if (isAtEnd() || check(TokenType.SEMICOLON) || check(TokenType.RPAREN)) {
+            throw error(peek(), "Expected expression after operator '" + operator.lexeme + "'.");
+        }
+
+        if (isBinaryOperator(peek().type)) {
+            throw error(peek(), "Expected expression after operator '" + operator.lexeme + "'.");
+        }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void detectInvalidExpressionStart() {
+        if (isBinaryOperator(peek().type)) {
+            throw error(peek(), "Expression cannot start with operator '" + peek().lexeme + "'.");
+        }
+
+        if (check(TokenType.RPAREN)) {
+            throw error(peek(), "Expected expression before ')'.");
+        }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private boolean isBinaryOperator(TokenType type) {
+        return type == TokenType.OR
+                || type == TokenType.AND
+                || type == TokenType.PLUS
+                || type == TokenType.MINUS
+                || type == TokenType.MUL
+                || type == TokenType.DIV
+                || type == TokenType.LT
+                || type == TokenType.GT
+                || type == TokenType.LE
+                || type == TokenType.GE
+                || type == TokenType.EQ
+                || type == TokenType.NE;
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    private boolean isKeyword(TokenType type) {
+        return type == TokenType.PRINT
+                || type == TokenType.AND
+                || type == TokenType.OR
+                || type == TokenType.NOT
+                || type == TokenType.TRUE
+                || type == TokenType.FALSE;
     }
 
     private Token consume(TokenType type, String message) {
