@@ -22,7 +22,7 @@ public class AssignmentStatementNode extends StatementNode {
 
     @Override
     public String label() {
-        return "Assign";
+        return "Assign (:=)";
     }
 
     @Override

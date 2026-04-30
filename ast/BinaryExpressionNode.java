@@ -28,7 +28,7 @@ public class BinaryExpressionNode extends ExpressionNode {
 
     @Override
     public String label() {
-        return "Binary: " + operator.getText();
+        return "Binary (" + operator.getText()+")";
     }
 
     @Override

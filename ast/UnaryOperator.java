@@ -1,8 +1,7 @@
 package ast;
 
 public enum UnaryOperator {
-    NOT("not"),
-    NEGATE("-");
+    NOT("not");
 
     private final String text;
 

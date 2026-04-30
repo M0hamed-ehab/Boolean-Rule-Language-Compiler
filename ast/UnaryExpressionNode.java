@@ -22,7 +22,7 @@ public class UnaryExpressionNode extends ExpressionNode {
 
     @Override
     public String label() {
-        return "Unary: " + operator.getText();
+        return "Unary (" + operator.getText()+")";
     }
 
     @Override
