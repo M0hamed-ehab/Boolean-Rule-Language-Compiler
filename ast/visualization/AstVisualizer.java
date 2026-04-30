@@ -68,6 +68,7 @@ public final class AstVisualizer {
 
             try {
                 Platform.startup(() -> {
+                    Platform.setImplicitExit(false);
                     startLatch.countDown();
                 });
             } catch (IllegalStateException alreadyStarted) {

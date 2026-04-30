@@ -10,55 +10,51 @@ public class main {
 
     public static void main(String[] args) {
 
-        System.out.println("Enter Code:");
-        java.util.Scanner input = new java.util.Scanner(System.in);
-        StringBuilder builder = new StringBuilder();
         while (true) {
-            String line = input.nextLine();
-            if (line.isEmpty()) {
-                break;
+            System.out.println("Enter Code:");
+            java.util.Scanner input = new java.util.Scanner(System.in);
+            StringBuilder builder = new StringBuilder();
+            while (true) {
+                String line = input.nextLine();
+                if (line.contentEquals("0")) {
+                    System.exit(1);
+                }
+                if (line.isEmpty()) {
+                    break;
+                }
+                builder.append(line).append("\n");
             }
-            builder.append(line).append("\n");
-        }
 
-        String source = builder.toString();
-        boolean printTokens = hasFlag(args, "--tokens");
+            String source = builder.toString();
 
-        try {
-            Scanner scanner = new Scanner(source);
-            List<Token> tokens = scanner.scanTokens();
+            try {
+                Scanner scanner = new Scanner(source);
+                List<Token> tokens = scanner.scanTokens();
 
-            if (printTokens) {
+                System.out.println("Tokens:");
                 for (Token token : tokens) {
                     System.out.println(token);
                 }
                 System.out.println();
-            }
 
-            Parser parser = new Parser(tokens);
-            ProgramNode program = parser.parseProgram();
+                Parser parser = new Parser(tokens);
+                ProgramNode program = parser.parseProgram();
 
-            System.out.println("Parse successful.");
-            System.out.println(toText(program));
-            
-            System.out.println("Opening ast GUI");
-            AstVisualizer.showAndWait(program, "Boolean Rule Language - AST");
-            
-            
-        } catch (RuntimeException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(1);
-        }
-    }
+                System.out.println("Parse successful.");
+                System.out.println(toText(program));
 
-    private static boolean hasFlag(String[] args, String flag) {
-        for (String arg : args) {
-            if (arg.equals(flag)) {
-                return true;
+                System.out.println("Opening ast GUI");
+                AstVisualizer.showAndWait(program, "Boolean Rule Language - AST");
+
+                System.out.println("Traversal:");
+                Traversal traversal = new Traversal();
+                traversal.traverse(program);
+
+            } catch (RuntimeException ex) {
+                System.err.println(ex.getMessage());
+                // System.exit(1);
             }
         }
-
-        return false;
     }
 
     private static String toText(AstNode root) {

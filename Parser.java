@@ -5,7 +5,6 @@ import ast.BinaryExpressionNode;
 import ast.BinaryOperator;
 import ast.BooleanLiteralNode;
 import ast.ExpressionNode;
-import ast.GroupingExpressionNode;
 import ast.IdentifierNode;
 import ast.NumberLiteralNode;
 import ast.PrintStatementNode;
@@ -16,6 +15,7 @@ import ast.UnaryOperator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 public class Parser {
     private final List<Token> tokens;
     private int current = 0;
@@ -163,7 +163,7 @@ public class Parser {
         if (match(TokenType.LPAREN)) {
             ExpressionNode expression = parseOrExpression();
             consume(TokenType.RPAREN, "Expected ')' after expression.");
-            return new GroupingExpressionNode(expression);
+            return expression;
         }
 
         detectInvalidExpressionStart();
@@ -211,22 +211,23 @@ public class Parser {
 
         return false;
     }
-    //ERROR DETECTION 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // ERROR DETECTION
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private void detectEmptyStatement() {
         if (check(TokenType.SEMICOLON)) {
             throw error(peek(), "Empty statements are not allowed.");
         }
     }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private void detectKeywordUsedAsIdentifier() {
         if (isKeyword(peek().type)) {
             throw error(peek(), "Keywords cannot be used as statement identifiers.");
         }
     }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private void ensureRightOperand(Token operator) {
         if (isAtEnd() || check(TokenType.SEMICOLON) || check(TokenType.RPAREN)) {
             throw error(peek(), "Expected expression after operator '" + operator.lexeme + "'.");
@@ -237,7 +238,7 @@ public class Parser {
         }
     }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private void detectInvalidExpressionStart() {
         if (isBinaryOperator(peek().type)) {
             throw error(peek(), "Expression cannot start with operator '" + peek().lexeme + "'.");
@@ -248,7 +249,7 @@ public class Parser {
         }
     }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean isBinaryOperator(TokenType type) {
         return type == TokenType.OR
                 || type == TokenType.AND
@@ -264,7 +265,7 @@ public class Parser {
                 || type == TokenType.NE;
     }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     private boolean isKeyword(TokenType type) {
         return type == TokenType.PRINT
                 || type == TokenType.AND
@@ -312,6 +313,7 @@ public class Parser {
 
     private ParseException error(Token token, String message) {
         String found = token.type == TokenType.EOF ? "end of input" : "'" + token.lexeme + "'";
-        return new ParseException("Syntax error at position " + token.position + ": " + message + " Found " + found + ".");
+        return new ParseException(
+                "Syntax error at position " + token.position + ": " + message + " Found " + found + ".");
     }
 }
