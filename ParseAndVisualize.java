@@ -10,7 +10,11 @@ import java.util.List;
 public class ParseAndVisualize {
 
     public static void main(String[] args) {
-        String filePath = "tests/valid/sample.brl";
+        String filePath = firstNonFlag(args);
+        if (filePath == null) {
+            filePath = "tests/valid/sample.brl";
+        }
+
         String source = loadSource(filePath);
         if (source == null) {
             System.exit(1);
