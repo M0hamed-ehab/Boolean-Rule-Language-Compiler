@@ -1,0 +1,4 @@
+ziad := 100000;
+limit := base * 2 + 5;
+allowed := limit >= 20 and not false;
+print allowed;
