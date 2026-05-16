@@ -100,13 +100,17 @@ public class main {
 
             System.out.println("Parse successful.");
             System.out.println(toText(program));
-
-            System.out.println("Opening ast GUI");
-            AstVisualizer.showAndWait(program, windowTitle);
-
+            
+            try{
             System.out.println("Traversal:");
             Traversal traversal = new Traversal();
-            traversal.traverse(program);
+            traversal.traverse(program);}
+            finally{
+            
+            System.out.println("Opening ast GUI");
+            AstVisualizer.showAndWait(program, windowTitle);
+            }
+
 
         } catch (RuntimeException ex) {
             System.err.println(ex.getMessage());
